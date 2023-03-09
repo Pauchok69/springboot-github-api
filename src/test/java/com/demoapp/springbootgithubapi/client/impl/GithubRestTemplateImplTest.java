@@ -1,6 +1,9 @@
 package com.demoapp.springbootgithubapi.client.impl;
 
+import com.demoapp.springbootgithubapi.exception.RepositoryDoesNotExistException;
 import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
+import com.demoapp.springbootgithubapi.model.Branch;
+import com.demoapp.springbootgithubapi.model.Owner;
 import com.demoapp.springbootgithubapi.model.Repository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,9 +52,12 @@ class GithubRestTemplateImplTest {
     void setUp() {
         when(restTemplateMock.getForEntity(anyString(), any(), anyString(), anyInt(), anyInt()))
                 .thenReturn(responseEntityMock);
+        when(restTemplateMock.getForEntity(anyString(), any(), anyString(), anyString(), anyInt(), anyInt()))
+                .thenReturn(responseEntityMock);
         when(responseEntityMock.getStatusCode()).thenReturn(HttpStatus.OK);
     }
 
+    //getUserRepositoriesByUsername
     @Test
     void getUserRepositoriesByUsernameShouldReturnEmptyListWhenResponseBodyIsNull() {
         when(responseEntityMock.getBody()).thenReturn(null);
@@ -74,7 +80,6 @@ class GithubRestTemplateImplTest {
         when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_API_VERSION)).thenReturn(null);
 
         Assertions.assertEquals(99, githubRestTemplate.getUserRepositoriesByUsername("User with less than 100 repositories").size());
-        githubRestTemplate.getUserRepositoriesByUsername("User with less than 100 repositories");
     }
 
     @Test
@@ -89,6 +94,58 @@ class GithubRestTemplateImplTest {
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE));
 
         Assertions.assertEquals(150, githubRestTemplate.getUserRepositoriesByUsername("User with 150 repositories").size());
-        githubRestTemplate.getUserRepositoriesByUsername("User with less than 100 repositories");
+    }
+
+    //getRepositoryBranches()
+    @Test
+    void getRepositoryBranchesShouldReturnEmptyListWhenResponseBodyIsNull() {
+        when(responseEntityMock.getBody()).thenReturn(null);
+
+        Assertions.assertEquals(Collections.emptyList(), githubRestTemplate.getRepositoryBranches(createTestRepository()));
+    }
+
+    @Test
+    void getRepositoryBranchesShouldThrowsProperExceptionWhenResponseHttpStatusIs404() {
+        when(responseEntityMock.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
+
+        Assertions.assertThrows(
+                RepositoryDoesNotExistException.class,
+                () -> githubRestTemplate.getRepositoryBranches(createTestRepository())
+        );
+    }
+
+    @Test
+    void getRepositoryBranchesShouldWorkCorrectForLessThan100Branches() {
+        HttpHeaders httpHeadersMock = mock(HttpHeaders.class);
+        when(responseEntityMock.getBody()).thenReturn(new Branch[99]);
+        when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
+        when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_API_VERSION)).thenReturn(null);
+
+        Assertions.assertEquals(99, githubRestTemplate.getRepositoryBranches(createTestRepository()).size());
+    }
+
+    @Test
+    void getRepositoryBranchesShouldWorksCorrectForMoreThan100Repositories() {
+        HttpHeaders httpHeadersMock = mock(HttpHeaders.class);
+        when(responseEntityMock.getBody())
+                .thenReturn(new Branch[100])
+                .thenReturn(new Branch[50]);
+        when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
+        when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_LINK))
+                .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE))
+                .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE));
+
+        Assertions.assertEquals(150, githubRestTemplate.getRepositoryBranches(createTestRepository()).size());
+    }
+
+    private static Repository createTestRepository() {
+        Owner owner = new Owner();
+        owner.setLogin("Test owner");
+
+        Repository repository = new Repository();
+        repository.setName("Test Repository");
+        repository.setFork(Boolean.FALSE);
+        repository.setOwner(owner);
+        return repository;
     }
 }

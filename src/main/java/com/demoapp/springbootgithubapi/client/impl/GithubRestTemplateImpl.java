@@ -1,6 +1,7 @@
 package com.demoapp.springbootgithubapi.client.impl;
 
 import com.demoapp.springbootgithubapi.client.GithubRestTemplate;
+import com.demoapp.springbootgithubapi.exception.RepositoryDoesNotExistException;
 import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
 import com.demoapp.springbootgithubapi.model.Branch;
 import com.demoapp.springbootgithubapi.model.Repository;
@@ -20,6 +21,7 @@ import java.util.List;
 public class GithubRestTemplateImpl implements GithubRestTemplate {
     public static final String HTTP_HEADER_GITHUB_API_VERSION = "X-GitHub-Api-Version";
     public static final String HTTP_HEADER_GITHUB_LINK = "Link";
+    public static final int PER_PAGE_DEFAULT = 100;
     private final RestTemplate restTemplate;
 
     public GithubRestTemplateImpl(
@@ -60,25 +62,58 @@ public class GithubRestTemplateImpl implements GithubRestTemplate {
         return repositories;
     }
 
-    private static boolean hasNextPage(List<String> linkHeader) {
-        return linkHeader != null
-                && !linkHeader.isEmpty()
-                && linkHeader.get(0).contains("rel=\"next\"");
-    }
-
     private ResponseEntity<Repository[]> doGetUserRepositoriesByUsername(String username, int page) {
         return restTemplate.getForEntity(
                 "/users/{username}/repos?per_page={perPage}&page={page}",
                 Repository[].class,
                 username,
-                100,
+                PER_PAGE_DEFAULT,
                 page
         );
     }
 
     @Override
     public List<Branch> getRepositoryBranches(Repository repository) {
+        int page = 1;
+        List<Branch> branches = new ArrayList<>();
+        List<String> linkHeader;
 
-        return null;
+        do {
+            ResponseEntity<Branch[]> responseEntity = doGetRepositoryBranches(repository, page);
+
+            if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                throw new RepositoryDoesNotExistException(repository.getOwner().getLogin(), repository.getName());
+            }
+            Branch[] body = responseEntity.getBody();
+
+            if (body == null) {
+                break;
+            }
+            branches.addAll(Arrays.asList(body));
+            linkHeader = responseEntity.getHeaders().get(HTTP_HEADER_GITHUB_LINK);
+
+            page++;
+        } while (hasNextPage(linkHeader));
+
+        return branches;
     }
+
+    private ResponseEntity<Branch[]> doGetRepositoryBranches(Repository repository, int page) {
+        return restTemplate.getForEntity(
+                "/repos/{username}/{repository_name}/branches",
+                Branch[].class,
+                repository.getName(),
+                repository.getOwner().getLogin(),
+                PER_PAGE_DEFAULT,
+                page
+        );
+    }
+
+
+    private static boolean hasNextPage(List<String> linkHeader) {
+        return linkHeader != null
+                && !linkHeader.isEmpty()
+                && linkHeader.get(0).contains("rel=\"next\"");
+    }
+
 }
