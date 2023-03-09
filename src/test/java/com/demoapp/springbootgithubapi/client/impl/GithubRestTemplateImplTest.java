@@ -3,7 +3,6 @@ package com.demoapp.springbootgithubapi.client.impl;
 import com.demoapp.springbootgithubapi.exception.RepositoryDoesNotExistException;
 import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
 import com.demoapp.springbootgithubapi.model.Branch;
-import com.demoapp.springbootgithubapi.model.Owner;
 import com.demoapp.springbootgithubapi.model.Repository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -25,6 +24,8 @@ import static org.mockito.Mockito.when;
 class GithubRestTemplateImplTest {
     public static final String GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE = "<https://api.github.com/user/50894/repos?per_page=100&page=2>; rel=\"next\", <https://api.github.com/user/50894/repos?per_page=100&page=5>; rel=\"last\"";
     public static final String GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE = "<https://api.github.com/user/50894/repos?per_page=100&page=4>; rel=\"prev\", <https://api.github.com/user/50894/repos?per_page=100&page=1>; rel=\"first\"";
+    public static final String TEST_USERNAME = "Test username";
+    public static final String TEST_REPOSITORY = "Test Repository";
 
     private static final RestTemplate restTemplateMock = mock(RestTemplate.class);
     private static final ResponseEntity<Object> responseEntityMock = mock(ResponseEntity.class);
@@ -69,7 +70,7 @@ class GithubRestTemplateImplTest {
     void getUserRepositoriesByUsernameShouldThrowsUserNotFoundExceptionWhenResponseHttpStatusIs404() {
         when(responseEntityMock.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
 
-        Assertions.assertThrows(UserDoesNotExistException.class, () -> githubRestTemplate.getUserRepositoriesByUsername("Not existable user"));
+        Assertions.assertThrows(UserDoesNotExistException.class, () -> githubRestTemplate.getUserRepositoriesByUsername("Not existing user"));
     }
 
     @Test
@@ -101,7 +102,7 @@ class GithubRestTemplateImplTest {
     void getRepositoryBranchesShouldReturnEmptyListWhenResponseBodyIsNull() {
         when(responseEntityMock.getBody()).thenReturn(null);
 
-        Assertions.assertEquals(Collections.emptyList(), githubRestTemplate.getRepositoryBranches(createTestRepository()));
+        Assertions.assertEquals(Collections.emptyList(), githubRestTemplate.getRepositoryBranches(TEST_USERNAME, "Not Existing Repository"));
     }
 
     @Test
@@ -110,7 +111,7 @@ class GithubRestTemplateImplTest {
 
         Assertions.assertThrows(
                 RepositoryDoesNotExistException.class,
-                () -> githubRestTemplate.getRepositoryBranches(createTestRepository())
+                () -> githubRestTemplate.getRepositoryBranches(TEST_USERNAME, TEST_REPOSITORY)
         );
     }
 
@@ -121,7 +122,7 @@ class GithubRestTemplateImplTest {
         when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
         when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_API_VERSION)).thenReturn(null);
 
-        Assertions.assertEquals(99, githubRestTemplate.getRepositoryBranches(createTestRepository()).size());
+        Assertions.assertEquals(99, githubRestTemplate.getRepositoryBranches(TEST_USERNAME, TEST_REPOSITORY).size());
     }
 
     @Test
@@ -135,17 +136,6 @@ class GithubRestTemplateImplTest {
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE))
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE));
 
-        Assertions.assertEquals(150, githubRestTemplate.getRepositoryBranches(createTestRepository()).size());
-    }
-
-    private static Repository createTestRepository() {
-        Owner owner = new Owner();
-        owner.setLogin("Test owner");
-
-        Repository repository = new Repository();
-        repository.setName("Test Repository");
-        repository.setFork(Boolean.FALSE);
-        repository.setOwner(owner);
-        return repository;
+        Assertions.assertEquals(150, githubRestTemplate.getRepositoryBranches(TEST_USERNAME, TEST_REPOSITORY).size());
     }
 }

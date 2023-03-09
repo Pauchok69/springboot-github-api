@@ -73,16 +73,16 @@ public class GithubRestTemplateImpl implements GithubRestTemplate {
     }
 
     @Override
-    public List<Branch> getRepositoryBranches(Repository repository) {
+    public List<Branch> getRepositoryBranches(String username, String repositoryName) {
         int page = 1;
         List<Branch> branches = new ArrayList<>();
         List<String> linkHeader;
 
         do {
-            ResponseEntity<Branch[]> responseEntity = doGetRepositoryBranches(repository, page);
+            ResponseEntity<Branch[]> responseEntity = doGetRepositoryBranches(username, repositoryName, page);
 
             if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
-                throw new RepositoryDoesNotExistException(repository.getOwner().getLogin(), repository.getName());
+                throw new RepositoryDoesNotExistException(username, repositoryName);
             }
             Branch[] body = responseEntity.getBody();
 
@@ -98,12 +98,12 @@ public class GithubRestTemplateImpl implements GithubRestTemplate {
         return branches;
     }
 
-    private ResponseEntity<Branch[]> doGetRepositoryBranches(Repository repository, int page) {
+    private ResponseEntity<Branch[]> doGetRepositoryBranches(String username, String repositoryName, int page) {
         return restTemplate.getForEntity(
                 "/repos/{username}/{repository_name}/branches",
                 Branch[].class,
-                repository.getName(),
-                repository.getOwner().getLogin(),
+                repositoryName,
+                username,
                 PER_PAGE_DEFAULT,
                 page
         );
