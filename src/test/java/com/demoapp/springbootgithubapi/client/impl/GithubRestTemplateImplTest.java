@@ -40,8 +40,8 @@ class GithubRestTemplateImplTest {
 
         githubRestTemplate = new GithubRestTemplateImpl(
                 restTemplateBuilderMock,
-                "2022-11-28",
-                "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"
+                anyString(),
+                anyString()
         );
     }
 
