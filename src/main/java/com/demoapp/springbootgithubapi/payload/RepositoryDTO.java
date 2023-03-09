@@ -9,5 +9,4 @@ public class RepositoryDTO {
     private String name;
     private String ownerLogin;
     private Set<BranchDTO> branches;
-
 }
