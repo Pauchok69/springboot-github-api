@@ -102,8 +102,8 @@ public class GithubRestTemplateImpl implements GithubRestTemplate {
         return restTemplate.getForEntity(
                 "/repos/{username}/{repository_name}/branches",
                 Branch[].class,
-                repositoryName,
                 username,
+                repositoryName,
                 PER_PAGE_DEFAULT,
                 page
         );

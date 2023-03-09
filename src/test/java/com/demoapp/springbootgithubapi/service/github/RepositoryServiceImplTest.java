@@ -4,7 +4,9 @@ import com.demoapp.springbootgithubapi.client.GithubRestTemplate;
 import com.demoapp.springbootgithubapi.mapper.RepositoryMapper;
 import com.demoapp.springbootgithubapi.model.Owner;
 import com.demoapp.springbootgithubapi.model.Repository;
+import com.demoapp.springbootgithubapi.payload.BranchDTO;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
+import com.demoapp.springbootgithubapi.service.BranchService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,12 +21,15 @@ import static org.mockito.Mockito.when;
 
 class RepositoryServiceImplTest {
     private static GithubRestTemplate githubRestTemplateMock;
+    private static BranchService branchServiceMock;
     private static RepositoryServiceImpl repositoryService;
+
 
     @BeforeAll
     static void beforeAll() {
         githubRestTemplateMock = mock(GithubRestTemplate.class);
-        repositoryService = new RepositoryServiceImpl(githubRestTemplateMock, Mappers.getMapper(RepositoryMapper.class));
+        branchServiceMock = mock(BranchServiceImpl.class);
+        repositoryService = new RepositoryServiceImpl(githubRestTemplateMock, Mappers.getMapper(RepositoryMapper.class), branchServiceMock);
     }
 
     @Test
@@ -38,13 +43,7 @@ class RepositoryServiceImplTest {
 
     @Test
     void getAllNonForkedRepositoriesByUsernameMappedCorrectly() {
-        Owner owner = new Owner();
-        owner.setLogin("test owner");
-
-        Repository repository = new Repository();
-        repository.setName("test repository");
-        repository.setFork(Boolean.FALSE);
-        repository.setOwner(owner);
+        Repository repository = createTestRepository();
 
         when(githubRestTemplateMock.getUserRepositoriesByUsername(anyString()))
                 .thenReturn(List.of(repository));
@@ -57,18 +56,10 @@ class RepositoryServiceImplTest {
 
     @Test
     void getAllNonForkedRepositoriesByUsernameShouldNotContainForkedRepositories() {
-        Owner owner = new Owner();
-        owner.setLogin("test owner");
+        Repository repository = createTestRepository();
 
-        Repository repository = new Repository();
-        repository.setName("test repository");
-        repository.setFork(Boolean.FALSE);
-        repository.setOwner(owner);
-
-        Repository forkedRepository = new Repository();
-        forkedRepository.setName("Forked Repo");
+        Repository forkedRepository = createTestRepository();
         forkedRepository.setFork(Boolean.TRUE);
-        forkedRepository.setOwner(owner);
 
         when(githubRestTemplateMock.getUserRepositoriesByUsername(anyString()))
                 .thenReturn(List.of(repository, forkedRepository));
@@ -77,5 +68,31 @@ class RepositoryServiceImplTest {
         System.out.println("repositoriesDTOs = " + repositoriesDTOs);
 
         Assertions.assertEquals(1, repositoriesDTOs.size());
+    }
+
+    @Test
+    void getAllNonForkedRepositoriesByUsernameShouldWorkCorrectlyWithBranches() {
+        Repository repository = createTestRepository();
+
+        when(githubRestTemplateMock.getUserRepositoriesByUsername(anyString()))
+                .thenReturn(List.of(repository));
+
+        when(branchServiceMock.getBranches(anyString(), anyString()))
+                .thenReturn(List.of(new BranchDTO(), new BranchDTO()));
+
+        List<RepositoryDTO> repositoriesDTOs = repositoryService.getAllNonForkedRepositoriesByUsername(anyString());
+
+        Assertions.assertEquals(2, repositoriesDTOs.get(0).getBranches().size());
+    }
+
+    private static Repository createTestRepository() {
+        Owner owner = new Owner();
+        owner.setLogin("test owner");
+
+        Repository repository = new Repository();
+        repository.setName("test repository");
+        repository.setFork(Boolean.FALSE);
+        repository.setOwner(owner);
+        return repository;
     }
 }
