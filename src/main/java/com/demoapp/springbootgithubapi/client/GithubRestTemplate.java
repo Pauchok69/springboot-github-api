@@ -8,5 +8,5 @@ import java.util.List;
 public interface GithubRestTemplate {
     List<Repository> getUserRepositoriesByUsername(String username);
 
-    List<Branch> getBranches(String username, Repository repository);
+    List<Branch> getRepositoryBranches(Repository repository);
 }

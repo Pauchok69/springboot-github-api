@@ -38,21 +38,13 @@ class RepositoryServiceImplTest {
     }
 
     @Test
-    void getAllNonForkedRepositoriesByUsernameShouldWorkCorrectWithNoneZeroRepositories() {
-        when(githubRestTemplateMock.getUserRepositoriesByUsername(anyString()))
-                .thenReturn(Arrays.asList(new Repository(), new Repository(), new Repository()));
-
-        List<RepositoryDTO> repositories = repositoryService.getAllNonForkedRepositoriesByUsername(anyString());
-        Assertions.assertEquals(3, repositories.size());
-    }
-
-    @Test
     void getAllNonForkedRepositoriesByUsernameMappedCorrectly() {
         Owner owner = new Owner();
         owner.setLogin("test owner");
 
         Repository repository = new Repository();
         repository.setName("test repository");
+        repository.setFork(Boolean.FALSE);
         repository.setOwner(owner);
 
         when(githubRestTemplateMock.getUserRepositoriesByUsername(anyString()))
@@ -62,5 +54,29 @@ class RepositoryServiceImplTest {
 
         Assertions.assertEquals(repositoriesDTOs.get(0).getName(), repository.getName());
         Assertions.assertEquals(repositoriesDTOs.get(0).getOwnerLogin(), repository.getOwner().getLogin());
+    }
+
+    @Test
+    void getAllNonForkedRepositoriesByUsernameShouldNotContainForkedRepositories() {
+        Owner owner = new Owner();
+        owner.setLogin("test owner");
+
+        Repository repository = new Repository();
+        repository.setName("test repository");
+        repository.setFork(Boolean.FALSE);
+        repository.setOwner(owner);
+
+        Repository forkedRepository = new Repository();
+        forkedRepository.setName("Forked Repo");
+        forkedRepository.setFork(Boolean.TRUE);
+        forkedRepository.setOwner(owner);
+
+        when(githubRestTemplateMock.getUserRepositoriesByUsername(anyString()))
+                .thenReturn(List.of(repository, forkedRepository));
+
+        List<RepositoryDTO> repositoriesDTOs = repositoryService.getAllNonForkedRepositoriesByUsername(anyString());
+        System.out.println("repositoriesDTOs = " + repositoriesDTOs);
+
+        Assertions.assertEquals(1, repositoriesDTOs.size());
     }
 }

@@ -67,11 +67,18 @@ public class GithubRestTemplateImpl implements GithubRestTemplate {
     }
 
     private ResponseEntity<Repository[]> doGetUserRepositoriesByUsername(String username, int page) {
-        return restTemplate.getForEntity("/users/{username}/repos?per_page={perPage}&page={page}", Repository[].class, username, 100, page);
+        return restTemplate.getForEntity(
+                "/users/{username}/repos?per_page={perPage}&page={page}",
+                Repository[].class,
+                username,
+                100,
+                page
+        );
     }
 
     @Override
-    public List<Branch> getBranches(String username, Repository repository) {
+    public List<Branch> getRepositoryBranches(Repository repository) {
+
         return null;
     }
 }

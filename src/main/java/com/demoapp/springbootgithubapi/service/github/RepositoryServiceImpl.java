@@ -25,6 +25,10 @@ public class RepositoryServiceImpl implements RepositoryService {
     public List<RepositoryDTO> getAllNonForkedRepositoriesByUsername(String username) {
         List<Repository> repositories = githubRestTemplate.getUserRepositoriesByUsername(username);
 
-        return repositories.stream().map(repositoryMapper::repositoryToRepositoryDto).toList();
+        return repositories
+                .stream()
+                .filter(repository -> !repository.getFork())
+                .map(repositoryMapper::repositoryToRepositoryDto)
+                .toList();
     }
 }

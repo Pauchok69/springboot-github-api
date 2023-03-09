@@ -40,8 +40,8 @@ class GithubRestTemplateImplTest {
 
         githubRestTemplate = new GithubRestTemplateImpl(
                 restTemplateBuilderMock,
-                anyString(),
-                anyString()
+                "Test API Version",
+                "Test API Token"
         );
     }
 
