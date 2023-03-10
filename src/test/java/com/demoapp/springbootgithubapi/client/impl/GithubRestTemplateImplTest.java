@@ -12,6 +12,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -29,6 +30,8 @@ class GithubRestTemplateImplTest {
 
     private static final RestTemplate restTemplateMock = mock(RestTemplate.class);
     private static final ResponseEntity<Object> responseEntityMock = mock(ResponseEntity.class);
+    public static final String NOT_EXISTING_USER = "Not Existing User";
+    public static final String NOT_EXISTING_REPOSITORY = "Not Existing Repository";
     private static GithubRestTemplateImpl githubRestTemplate;
 
     @BeforeAll
@@ -67,14 +70,14 @@ class GithubRestTemplateImplTest {
     }
 
     @Test
-    void getUserRepositoriesByUsernameShouldThrowsUserNotFoundExceptionWhenResponseHttpStatusIs404() {
+    void getUserRepositoriesByUsernameShouldThrowUserNotFoundExceptionWhenResponseHttpStatusIs404() {
         when(responseEntityMock.getStatusCode()).thenReturn(HttpStatus.NOT_FOUND);
 
         Assertions.assertThrows(UserDoesNotExistException.class, () -> githubRestTemplate.getUserRepositoriesByUsername("Not existing user"));
     }
 
     @Test
-    void getUserRepositoriesByUsernameShouldWorksCorrectForLessThan100Repositories() {
+    void getUserRepositoriesByUsernameShouldWorkCorrectForLessThan100Repositories() {
         HttpHeaders httpHeadersMock = mock(HttpHeaders.class);
         when(responseEntityMock.getBody()).thenReturn(new Repository[99]);
         when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
@@ -84,7 +87,7 @@ class GithubRestTemplateImplTest {
     }
 
     @Test
-    void getUserRepositoriesByUsernameShouldWorksCorrectForMoreThan100Repositories() {
+    void getUserRepositoriesByUsernameShouldWorkCorrectForMoreThan100Repositories() {
         HttpHeaders httpHeadersMock = mock(HttpHeaders.class);
         when(responseEntityMock.getBody())
                 .thenReturn(new Repository[100])
@@ -97,12 +100,20 @@ class GithubRestTemplateImplTest {
         Assertions.assertEquals(150, githubRestTemplate.getUserRepositoriesByUsername("User with 150 repositories").size());
     }
 
+    @Test
+    void getUserRepositoriesByUsernameShouldThrowUserNotFoundExceptionWhenHttpClientErrorExceptionOccurs() {
+        when(restTemplateMock.getForEntity(anyString(), any(), eq(NOT_EXISTING_USER), anyInt(), anyInt()))
+                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        Assertions.assertThrows(UserDoesNotExistException.class, () -> githubRestTemplate.getUserRepositoriesByUsername(NOT_EXISTING_USER));
+    }
+
     //getRepositoryBranches()
     @Test
     void getRepositoryBranchesShouldReturnEmptyListWhenResponseBodyIsNull() {
         when(responseEntityMock.getBody()).thenReturn(null);
 
-        Assertions.assertEquals(Collections.emptyList(), githubRestTemplate.getRepositoryBranches(TEST_USERNAME, "Not Existing Repository"));
+        Assertions.assertEquals(Collections.emptyList(), githubRestTemplate.getRepositoryBranches(TEST_USERNAME, NOT_EXISTING_REPOSITORY));
     }
 
     @Test
@@ -126,7 +137,7 @@ class GithubRestTemplateImplTest {
     }
 
     @Test
-    void getRepositoryBranchesShouldWorksCorrectForMoreThan100Repositories() {
+    void getRepositoryBranchesShouldWorkCorrectForMoreThan100Repositories() {
         HttpHeaders httpHeadersMock = mock(HttpHeaders.class);
         when(responseEntityMock.getBody())
                 .thenReturn(new Branch[100])
@@ -137,5 +148,16 @@ class GithubRestTemplateImplTest {
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE));
 
         Assertions.assertEquals(150, githubRestTemplate.getRepositoryBranches(TEST_USERNAME, TEST_REPOSITORY).size());
+    }
+
+    @Test
+    void getRepositoryBranchesShouldThrowRepositoryNotFoundExceptionWhenHttpClientErrorExceptionOccurs() {
+        when(restTemplateMock.getForEntity(anyString(), any(), anyString(), eq(NOT_EXISTING_REPOSITORY), anyInt(), anyInt()))
+                .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+
+        Assertions.assertThrows(
+                RepositoryDoesNotExistException.class,
+                () -> githubRestTemplate.getRepositoryBranches(TEST_USERNAME, NOT_EXISTING_REPOSITORY)
+        );
     }
 }

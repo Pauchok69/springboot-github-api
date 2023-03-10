@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -42,22 +43,29 @@ public class GithubRestTemplateImpl implements GithubRestTemplate {
         List<Repository> repositories = new ArrayList<>();
         List<String> linkHeader;
 
-        do {
-            ResponseEntity<Repository[]> responseEntity = doGetUserRepositoriesByUsername(username, page);
+        try {
+            do {
+                ResponseEntity<Repository[]> responseEntity = doGetUserRepositoriesByUsername(username, page);
 
-            if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                    throw new UserDoesNotExistException(username);
+                }
+                Repository[] body = responseEntity.getBody();
+
+                if (body == null) {
+                    break;
+                }
+                repositories.addAll(Arrays.asList(body));
+                linkHeader = responseEntity.getHeaders().get(HTTP_HEADER_GITHUB_LINK);
+
+                page++;
+            } while (hasNextPage(linkHeader));
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
                 throw new UserDoesNotExistException(username);
             }
-            Repository[] body = responseEntity.getBody();
-
-            if (body == null) {
-                break;
-            }
-            repositories.addAll(Arrays.asList(body));
-            linkHeader = responseEntity.getHeaders().get(HTTP_HEADER_GITHUB_LINK);
-
-            page++;
-        } while (hasNextPage(linkHeader));
+            throw exception;
+        }
 
         return repositories;
     }
@@ -78,22 +86,30 @@ public class GithubRestTemplateImpl implements GithubRestTemplate {
         List<Branch> branches = new ArrayList<>();
         List<String> linkHeader;
 
-        do {
-            ResponseEntity<Branch[]> responseEntity = doGetRepositoryBranches(username, repositoryName, page);
+        try {
+            do {
+                ResponseEntity<Branch[]> responseEntity = doGetRepositoryBranches(username, repositoryName, page);
 
-            if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                    throw new RepositoryDoesNotExistException(username, repositoryName);
+                }
+                Branch[] body = responseEntity.getBody();
+
+                if (body == null) {
+                    break;
+                }
+                branches.addAll(Arrays.asList(body));
+                linkHeader = responseEntity.getHeaders().get(HTTP_HEADER_GITHUB_LINK);
+
+                page++;
+            } while (hasNextPage(linkHeader));
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
                 throw new RepositoryDoesNotExistException(username, repositoryName);
             }
-            Branch[] body = responseEntity.getBody();
 
-            if (body == null) {
-                break;
-            }
-            branches.addAll(Arrays.asList(body));
-            linkHeader = responseEntity.getHeaders().get(HTTP_HEADER_GITHUB_LINK);
-
-            page++;
-        } while (hasNextPage(linkHeader));
+            throw exception;
+        }
 
         return branches;
     }

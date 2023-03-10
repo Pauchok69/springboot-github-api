@@ -10,7 +10,7 @@ public class UserDoesNotExistException extends RuntimeException {
     private final String username;
 
     public UserDoesNotExistException(String username) {
-        super(String.format("There is no user with username: %s", username));
+        super(String.format("User with username '%s' not found", username));
         this.username = username;
     }
 }

@@ -12,7 +12,7 @@ public class RepositoryDoesNotExistException extends RuntimeException {
     private final String repositoryName;
 
     public RepositoryDoesNotExistException(String username, String repositoryName) {
-        super(String.format("There is no repository: %s, for username: %s", repositoryName, username));
+        super(String.format("Repository '%s' for username '%s' not found", repositoryName, username));
         this.username = username;
         this.repositoryName = repositoryName;
     }

@@ -3,6 +3,7 @@ package com.demoapp.springbootgithubapi.controller;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.RepositoryService;
 import com.demoapp.springbootgithubapi.service.github.RepositoryServiceImpl;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,11 @@ public class UserController {
         this.repositoryService = repositoryService;
     }
 
-    @GetMapping("/{username}/repositories")
+    @GetMapping(
+            value = "/{username}/repositories",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public List<RepositoryDTO> getRepositoriesByUsername(@PathVariable String username) {
         return repositoryService.getAllNonForkedRepositoriesByUsername(username);
     }
