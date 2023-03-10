@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping(
             value = "/{username}/repositories",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = "!" + MediaType.APPLICATION_XML_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<RepositoryDTO> getRepositoriesByUsername(@PathVariable String username) {
