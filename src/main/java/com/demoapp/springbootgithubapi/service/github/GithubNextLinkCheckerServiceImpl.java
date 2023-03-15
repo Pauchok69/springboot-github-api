@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GithubNextLinkCheckerServiceImpl implements GithubNextLinkCheckerService {
+public class GithubNextLinkCheckerServiceImpl<T> implements GithubNextLinkCheckerService<T> {
     @Override
-    public boolean doesNextLinkExistInHeader(ResponseEntity<Object> responseEntity) {
+    public boolean doesNextLinkExistInHeader(ResponseEntity<T> responseEntity) {
         List<String> linkHeader = responseEntity.getHeaders().get(HttpHeaders.LINK);
 
         return linkHeader != null

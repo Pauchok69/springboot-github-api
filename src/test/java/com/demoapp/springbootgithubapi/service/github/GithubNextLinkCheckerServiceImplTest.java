@@ -23,13 +23,13 @@ class GithubNextLinkCheckerServiceImplTest {
     private ResponseEntity<Object> responseEntityMock;
     @Mock
     private HttpHeaders httpHeadersMock;
-    private GithubNextLinkCheckerService nextLinkCheckerService;
+    private GithubNextLinkCheckerService<Object> nextLinkCheckerService;
 
     @BeforeEach
     void setUp() {
         when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
 
-        nextLinkCheckerService = new GithubNextLinkCheckerServiceImpl();
+        nextLinkCheckerService = new GithubNextLinkCheckerServiceImpl<>();
     }
 
     @Test
