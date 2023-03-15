@@ -2,16 +2,15 @@ package com.demoapp.springbootgithubapi.service.github;
 
 import com.demoapp.springbootgithubapi.service.GithubNextLinkCheckerService;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GithubNextLinkCheckerServiceImpl<T> implements GithubNextLinkCheckerService<T> {
+public class GithubNextLinkCheckerServiceImpl implements GithubNextLinkCheckerService {
     @Override
-    public boolean doesNextLinkExistInHeader(ResponseEntity<T> responseEntity) {
-        List<String> linkHeader = responseEntity.getHeaders().get(HttpHeaders.LINK);
+    public boolean doesNextLinkExistInHeaders(HttpHeaders httpHeaders) {
+        List<String> linkHeader = httpHeaders.get(HttpHeaders.LINK);
 
         return linkHeader != null
                 && !linkHeader.isEmpty()

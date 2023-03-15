@@ -1,7 +1,7 @@
 package com.demoapp.springbootgithubapi.service;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 
-public interface GithubNextLinkCheckerService<T> {
-    boolean doesNextLinkExistInHeader(ResponseEntity<T> responseEntity);
+public interface GithubNextLinkCheckerService {
+    boolean doesNextLinkExistInHeaders(HttpHeaders httpHeaders);
 }

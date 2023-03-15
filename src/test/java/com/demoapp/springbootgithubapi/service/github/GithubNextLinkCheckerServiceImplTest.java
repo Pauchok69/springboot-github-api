@@ -7,7 +7,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -20,39 +19,32 @@ class GithubNextLinkCheckerServiceImplTest {
     public static final String GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE = "<https://api.github.com/user/50894/repos?per_page=100&page=2>; rel=\"next\", <https://api.github.com/user/50894/repos?per_page=100&page=5>; rel=\"last\"";
     public static final String GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE = "<https://api.github.com/user/50894/repos?per_page=100&page=4>; rel=\"prev\", <https://api.github.com/user/50894/repos?per_page=100&page=1>; rel=\"first\"";
     @Mock
-    private ResponseEntity<Object> responseEntityMock;
-    @Mock
     private HttpHeaders httpHeadersMock;
-    private GithubNextLinkCheckerService<Object> nextLinkCheckerService;
+    private GithubNextLinkCheckerService nextLinkCheckerService;
 
     @BeforeEach
     void setUp() {
-        when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
-
-        nextLinkCheckerService = new GithubNextLinkCheckerServiceImpl<>();
+        nextLinkCheckerService = new GithubNextLinkCheckerServiceImpl();
     }
 
     @Test
     void doesNextLinkExistInHeaderShouldReturnFalseWhenLinkHeaderDoesNotExist() {
         when(httpHeadersMock.get(HttpHeaders.LINK)).thenReturn(null);
-        assertFalse(nextLinkCheckerService.doesNextLinkExistInHeader(responseEntityMock));
-        verify(responseEntityMock, times(1)).getHeaders();
+        assertFalse(nextLinkCheckerService.doesNextLinkExistInHeaders(httpHeadersMock));
         verify(httpHeadersMock, times(1)).get(anyString());
     }
 
     @Test
     void doesNextLinkExistInHeaderShouldReturnFalseWhenLinkHeaderExistsButNotContainNeededString() {
         when(httpHeadersMock.get(HttpHeaders.LINK)).thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE));
-        assertFalse(nextLinkCheckerService.doesNextLinkExistInHeader(responseEntityMock));
-        verify(responseEntityMock, times(1)).getHeaders();
+        assertFalse(nextLinkCheckerService.doesNextLinkExistInHeaders(httpHeadersMock));
         verify(httpHeadersMock, times(1)).get(anyString());
     }
 
     @Test
     void doesNextLinkExistInHeaderShouldReturnTrueWhenLinkHeaderExistsAndContainsNeededString() {
         when(httpHeadersMock.get(HttpHeaders.LINK)).thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE));
-        assertTrue(nextLinkCheckerService.doesNextLinkExistInHeader(responseEntityMock));
-        verify(responseEntityMock, times(1)).getHeaders();
+        assertTrue(nextLinkCheckerService.doesNextLinkExistInHeaders(httpHeadersMock));
         verify(httpHeadersMock, times(1)).get(anyString());
     }
 }
