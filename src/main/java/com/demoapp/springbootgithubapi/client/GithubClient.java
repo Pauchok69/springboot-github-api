@@ -5,7 +5,7 @@ import com.demoapp.springbootgithubapi.model.Repository;
 
 import java.util.List;
 
-public interface GithubRestTemplate {
+public interface GithubClient {
     List<Repository> getUserRepositoriesByUsername(String username);
 
     List<Branch> getRepositoryBranches(String username, String repositoryName);

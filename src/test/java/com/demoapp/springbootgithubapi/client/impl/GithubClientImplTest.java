@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class GithubRestTemplateImplTest {
+class GithubClientImplTest {
     public static final String GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE = "<https://api.github.com/user/50894/repos?per_page=100&page=2>; rel=\"next\", <https://api.github.com/user/50894/repos?per_page=100&page=5>; rel=\"last\"";
     public static final String GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE = "<https://api.github.com/user/50894/repos?per_page=100&page=4>; rel=\"prev\", <https://api.github.com/user/50894/repos?per_page=100&page=1>; rel=\"first\"";
     public static final String TEST_USERNAME = "Test username";
@@ -32,7 +32,7 @@ class GithubRestTemplateImplTest {
     private static final ResponseEntity<Object> responseEntityMock = mock(ResponseEntity.class);
     public static final String NOT_EXISTING_USER = "Not Existing User";
     public static final String NOT_EXISTING_REPOSITORY = "Not Existing Repository";
-    private static GithubRestTemplateImpl githubRestTemplate;
+    private static GithubClientImpl githubRestTemplate;
 
     @BeforeAll
     static void beforeAll() {
@@ -45,7 +45,7 @@ class GithubRestTemplateImplTest {
         when(restTemplateBuilderMock.build())
                 .thenReturn(restTemplateMock);
 
-        githubRestTemplate = new GithubRestTemplateImpl(
+        githubRestTemplate = new GithubClientImpl(
                 restTemplateBuilderMock,
                 "Test API Version",
                 "Test API Token"
@@ -81,7 +81,7 @@ class GithubRestTemplateImplTest {
         HttpHeaders httpHeadersMock = mock(HttpHeaders.class);
         when(responseEntityMock.getBody()).thenReturn(new Repository[99]);
         when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
-        when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_API_VERSION)).thenReturn(null);
+        when(httpHeadersMock.get(GithubClientImpl.HTTP_HEADER_GITHUB_API_VERSION)).thenReturn(null);
 
         Assertions.assertEquals(99, githubRestTemplate.getUserRepositoriesByUsername("User with less than 100 repositories").size());
     }
@@ -93,7 +93,7 @@ class GithubRestTemplateImplTest {
                 .thenReturn(new Repository[100])
                 .thenReturn(new Repository[50]);
         when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
-        when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_LINK))
+        when(httpHeadersMock.get(GithubClientImpl.HTTP_HEADER_GITHUB_LINK))
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE))
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE));
 
@@ -131,7 +131,7 @@ class GithubRestTemplateImplTest {
         HttpHeaders httpHeadersMock = mock(HttpHeaders.class);
         when(responseEntityMock.getBody()).thenReturn(new Branch[99]);
         when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
-        when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_API_VERSION)).thenReturn(null);
+        when(httpHeadersMock.get(GithubClientImpl.HTTP_HEADER_GITHUB_API_VERSION)).thenReturn(null);
 
         Assertions.assertEquals(99, githubRestTemplate.getRepositoryBranches(TEST_USERNAME, TEST_REPOSITORY).size());
     }
@@ -143,7 +143,7 @@ class GithubRestTemplateImplTest {
                 .thenReturn(new Branch[100])
                 .thenReturn(new Branch[50]);
         when(responseEntityMock.getHeaders()).thenReturn(httpHeadersMock);
-        when(httpHeadersMock.get(GithubRestTemplateImpl.HTTP_HEADER_GITHUB_LINK))
+        when(httpHeadersMock.get(GithubClientImpl.HTTP_HEADER_GITHUB_LINK))
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITH_NEXT_PAGE))
                 .thenReturn(List.of(GITHUB_RESPONSE_HEADER_LINK_WITHOUT_NEXT_PAGE));
 

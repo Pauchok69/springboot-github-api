@@ -1,6 +1,6 @@
 package com.demoapp.springbootgithubapi.service.github;
 
-import com.demoapp.springbootgithubapi.client.GithubRestTemplate;
+import com.demoapp.springbootgithubapi.client.GithubClient;
 import com.demoapp.springbootgithubapi.mapper.RepositoryMapper;
 import com.demoapp.springbootgithubapi.model.Owner;
 import com.demoapp.springbootgithubapi.model.Repository;
@@ -20,14 +20,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class RepositoryServiceImplTest {
-    private static GithubRestTemplate githubRestTemplateMock;
+    private static GithubClient githubRestTemplateMock;
     private static BranchService branchServiceMock;
     private static RepositoryServiceImpl repositoryService;
 
 
     @BeforeAll
     static void beforeAll() {
-        githubRestTemplateMock = mock(GithubRestTemplate.class);
+        githubRestTemplateMock = mock(GithubClient.class);
         branchServiceMock = mock(BranchServiceImpl.class);
         repositoryService = new RepositoryServiceImpl(githubRestTemplateMock, Mappers.getMapper(RepositoryMapper.class), branchServiceMock);
     }

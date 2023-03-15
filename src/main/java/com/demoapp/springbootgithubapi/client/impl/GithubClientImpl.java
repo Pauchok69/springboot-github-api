@@ -1,6 +1,6 @@
 package com.demoapp.springbootgithubapi.client.impl;
 
-import com.demoapp.springbootgithubapi.client.GithubRestTemplate;
+import com.demoapp.springbootgithubapi.client.GithubClient;
 import com.demoapp.springbootgithubapi.exception.RepositoryDoesNotExistException;
 import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
 import com.demoapp.springbootgithubapi.model.Branch;
@@ -19,13 +19,13 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class GithubRestTemplateImpl implements GithubRestTemplate {
+public class GithubClientImpl implements GithubClient {
     public static final String HTTP_HEADER_GITHUB_API_VERSION = "X-GitHub-Api-Version";
     public static final String HTTP_HEADER_GITHUB_LINK = "Link";
     public static final int PER_PAGE_DEFAULT = 100;
     private final RestTemplate restTemplate;
 
-    public GithubRestTemplateImpl(
+    public GithubClientImpl(
             RestTemplateBuilder restTemplateBuilder,
             @Value("${app.github.api_version}") String githubApiVersion,
             @Value("${app.github.api_token}") String githubApiToken

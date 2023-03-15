@@ -1,6 +1,6 @@
 package com.demoapp.springbootgithubapi.service.github;
 
-import com.demoapp.springbootgithubapi.client.GithubRestTemplate;
+import com.demoapp.springbootgithubapi.client.GithubClient;
 import com.demoapp.springbootgithubapi.mapper.RepositoryMapper;
 import com.demoapp.springbootgithubapi.model.Repository;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
@@ -13,13 +13,13 @@ import java.util.List;
 
 @Service
 public class RepositoryServiceImpl implements RepositoryService {
-    private final GithubRestTemplate githubRestTemplate;
+    private final GithubClient githubRestTemplate;
     private final RepositoryMapper repositoryMapper;
     private final BranchService branchService;
 
     @Autowired
     public RepositoryServiceImpl(
-            GithubRestTemplate githubRestTemplate,
+            GithubClient githubRestTemplate,
             RepositoryMapper repositoryMapper,
             BranchService branchService
     ) {
