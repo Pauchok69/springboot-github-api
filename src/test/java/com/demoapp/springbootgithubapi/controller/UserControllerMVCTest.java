@@ -1,6 +1,5 @@
-package com.demoapp.springbootgithubapi.it;
+package com.demoapp.springbootgithubapi.controller;
 
-import com.demoapp.springbootgithubapi.controller.UserController;
 import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
 import com.demoapp.springbootgithubapi.payload.BranchDTO;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
@@ -24,7 +23,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @WebMvcTest(UserController.class)
-class UserControllerIntegrationTest {
+class UserControllerMVCTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -37,7 +36,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void getRepositoriesByUsernameShouldReturnCorrectMessageForNotExistingUser() throws Exception {
-        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), false))
+        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), eq(false)))
                 .thenThrow(new UserDoesNotExistException("not-existing-user"));
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("not-existing-user")))
@@ -49,7 +48,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void getRepositoriesByUsernameShouldReturnCorrectMessageForContentTypeApplicationXml() throws Exception {
-        verify(repositoryServiceMock, never()).getAllRepositoriesByUsername(anyString(), false);
+        verify(repositoryServiceMock, never()).getAllRepositoriesByUsername(anyString(), eq(false));
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("anyUser")).contentType(MediaType.APPLICATION_XML))
                 .andDo(MockMvcResultHandlers.print())
@@ -60,7 +59,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void getRepositoriesByUsernameShouldReturnEmptyListForUserWithoutRepositories() throws Exception {
-        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), false))
+        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), eq(false)))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")))
@@ -87,7 +86,7 @@ class UserControllerIntegrationTest {
         repositoryDTO.setOwnerLogin(username);
         repositoryDTO.setBranches(List.of(branchDTO1, branchDTO2));
 
-        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), false))
+        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), eq(false)))
                 .thenReturn(List.of(repositoryDTO));
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")))
