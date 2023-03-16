@@ -1,7 +1,7 @@
 package com.demoapp.springbootgithubapi.exception;
 
 import com.demoapp.springbootgithubapi.client.exception.UserDoesNotExistException;
-import com.demoapp.springbootgithubapi.payload.ErrorDetailsDTO;
+import com.demoapp.springbootgithubapi.dto.ErrorDetailsDTO;
 import org.springframework.http.*;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;

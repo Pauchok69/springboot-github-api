@@ -1,7 +1,7 @@
 package com.demoapp.springbootgithubapi.mapper;
 
 import com.demoapp.springbootgithubapi.client.model.Branch;
-import com.demoapp.springbootgithubapi.payload.BranchDTO;
+import com.demoapp.springbootgithubapi.dto.BranchDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

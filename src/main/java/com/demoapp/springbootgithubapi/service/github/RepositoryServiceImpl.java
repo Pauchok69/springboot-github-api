@@ -3,7 +3,7 @@ package com.demoapp.springbootgithubapi.service.github;
 import com.demoapp.springbootgithubapi.client.GithubClient;
 import com.demoapp.springbootgithubapi.mapper.RepositoryMapper;
 import com.demoapp.springbootgithubapi.client.model.Repository;
-import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
+import com.demoapp.springbootgithubapi.dto.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.BranchService;
 import com.demoapp.springbootgithubapi.service.GithubNextLinkCheckerService;
 import com.demoapp.springbootgithubapi.service.RepositoryService;

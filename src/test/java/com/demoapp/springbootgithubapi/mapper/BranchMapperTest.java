@@ -2,7 +2,7 @@ package com.demoapp.springbootgithubapi.mapper;
 
 import com.demoapp.springbootgithubapi.client.model.Branch;
 import com.demoapp.springbootgithubapi.client.model.Commit;
-import com.demoapp.springbootgithubapi.payload.BranchDTO;
+import com.demoapp.springbootgithubapi.dto.BranchDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;

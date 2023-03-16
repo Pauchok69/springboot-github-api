@@ -1,7 +1,7 @@
 package com.demoapp.springbootgithubapi.service;
 
-import com.demoapp.springbootgithubapi.payload.BranchDTO;
-import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
+import com.demoapp.springbootgithubapi.dto.BranchDTO;
+import com.demoapp.springbootgithubapi.dto.RepositoryDTO;
 
 import java.util.List;
 

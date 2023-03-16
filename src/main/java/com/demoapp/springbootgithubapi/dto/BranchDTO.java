@@ -1,4 +1,4 @@
-package com.demoapp.springbootgithubapi.payload;
+package com.demoapp.springbootgithubapi.dto;
 
 import lombok.Data;
 

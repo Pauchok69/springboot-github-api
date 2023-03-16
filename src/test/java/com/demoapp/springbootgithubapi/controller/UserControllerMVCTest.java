@@ -1,8 +1,8 @@
 package com.demoapp.springbootgithubapi.controller;
 
 import com.demoapp.springbootgithubapi.client.exception.UserDoesNotExistException;
-import com.demoapp.springbootgithubapi.payload.BranchDTO;
-import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
+import com.demoapp.springbootgithubapi.dto.BranchDTO;
+import com.demoapp.springbootgithubapi.dto.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.github.RepositoryServiceImpl;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;

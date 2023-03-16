@@ -2,7 +2,7 @@ package com.demoapp.springbootgithubapi.mapper;
 
 import com.demoapp.springbootgithubapi.client.model.Owner;
 import com.demoapp.springbootgithubapi.client.model.Repository;
-import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
+import com.demoapp.springbootgithubapi.dto.RepositoryDTO;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;

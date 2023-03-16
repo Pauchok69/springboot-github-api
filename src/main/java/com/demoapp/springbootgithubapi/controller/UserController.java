@@ -1,6 +1,6 @@
 package com.demoapp.springbootgithubapi.controller;
 
-import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
+import com.demoapp.springbootgithubapi.dto.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.RepositoryService;
 import com.demoapp.springbootgithubapi.service.github.RepositoryServiceImpl;
 import org.springframework.http.MediaType;
