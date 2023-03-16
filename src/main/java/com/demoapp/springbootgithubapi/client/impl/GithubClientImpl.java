@@ -14,14 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 @Service
 public class GithubClientImpl implements GithubClient {
     public static final String HTTP_HEADER_GITHUB_API_VERSION = "X-GitHub-Api-Version";
-    public static final String HTTP_HEADER_GITHUB_LINK = "Link";
     public static final int PER_PAGE_DEFAULT = 100;
     private final RestTemplate restTemplate;
 
@@ -38,71 +33,47 @@ public class GithubClientImpl implements GithubClient {
     }
 
     @Override
-    public List<Repository> getUserRepositoriesByUsername(String username) {
-        int page = 1;
-        List<Repository> repositories = new ArrayList<>();
-        List<String> linkHeader;
-
+    public ResponseEntity<Repository[]> getUserRepositoriesByUsername(String username, int page) {
         try {
-            do {
-                ResponseEntity<Repository[]> responseEntity = doGetUserRepositoriesByUsername(username, page);
+            ResponseEntity<Repository[]> responseEntity = restTemplate.getForEntity(
+                    "/users/{username}/repos?per_page={perPage}&page={page}",
+                    Repository[].class,
+                    username,
+                    PER_PAGE_DEFAULT,
+                    page
+            );
 
-                if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
-                    throw new UserDoesNotExistException(username);
-                }
-                Repository[] body = responseEntity.getBody();
+            if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                throw new UserDoesNotExistException(username);
+            }
 
-                if (body == null) {
-                    break;
-                }
-                repositories.addAll(Arrays.asList(body));
-                linkHeader = responseEntity.getHeaders().get(HTTP_HEADER_GITHUB_LINK);
-
-                page++;
-            } while (hasNextPage(linkHeader));
+            return responseEntity;
         } catch (HttpClientErrorException exception) {
             if (exception.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
                 throw new UserDoesNotExistException(username);
             }
+
             throw exception;
         }
-
-        return repositories;
-    }
-
-    private ResponseEntity<Repository[]> doGetUserRepositoriesByUsername(String username, int page) {
-        return restTemplate.getForEntity(
-                "/users/{username}/repos?per_page={perPage}&page={page}",
-                Repository[].class,
-                username,
-                PER_PAGE_DEFAULT,
-                page
-        );
     }
 
     @Override
-    public List<Branch> getRepositoryBranches(String username, String repositoryName) {
-        int page = 1;
-        List<Branch> branches = new ArrayList<>();
-        List<String> linkHeader;
-
+    public ResponseEntity<Branch[]> getRepositoryBranches(String username, String repositoryName, int page) {
         try {
-            do {
-                ResponseEntity<Branch[]> responseEntity = doGetRepositoryBranches(username, repositoryName, page);
+            ResponseEntity<Branch[]> responseEntity = restTemplate.getForEntity(
+                    "/repos/{username}/{repository_name}/branches",
+                    Branch[].class,
+                    username,
+                    repositoryName,
+                    PER_PAGE_DEFAULT,
+                    page
+            );
 
-                if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
-                    throw new RepositoryDoesNotExistException(username, repositoryName);
-                }
-                Branch[] body = responseEntity.getBody();
+            if (responseEntity.getStatusCode().isSameCodeAs(HttpStatus.NOT_FOUND)) {
+                throw new RepositoryDoesNotExistException(username, repositoryName);
+            }
 
-                if (body == null) {
-                    break;
-                }
-                branches.addAll(Arrays.asList(body));
-                linkHeader = responseEntity.getHeaders().get(HTTP_HEADER_GITHUB_LINK);
-
-                page++;
-            } while (hasNextPage(linkHeader));
+            return responseEntity;
         } catch (HttpClientErrorException exception) {
             if (exception.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
                 throw new RepositoryDoesNotExistException(username, repositoryName);
@@ -110,26 +81,5 @@ public class GithubClientImpl implements GithubClient {
 
             throw exception;
         }
-
-        return branches;
     }
-
-    private ResponseEntity<Branch[]> doGetRepositoryBranches(String username, String repositoryName, int page) {
-        return restTemplate.getForEntity(
-                "/repos/{username}/{repository_name}/branches",
-                Branch[].class,
-                username,
-                repositoryName,
-                PER_PAGE_DEFAULT,
-                page
-        );
-    }
-
-
-    private static boolean hasNextPage(List<String> linkHeader) {
-        return linkHeader != null
-                && !linkHeader.isEmpty()
-                && linkHeader.get(0).contains("rel=\"next\"");
-    }
-
 }

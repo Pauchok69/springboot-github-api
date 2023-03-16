@@ -26,6 +26,6 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public List<RepositoryDTO> getRepositoriesByUsername(@PathVariable String username) {
-        return repositoryService.getAllNonForkedRepositoriesByUsername(username);
+        return repositoryService.getAllRepositoriesByUsername(username, false);
     }
 }

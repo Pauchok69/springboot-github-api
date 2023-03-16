@@ -37,7 +37,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void getRepositoriesByUsernameShouldReturnCorrectMessageForNotExistingUser() throws Exception {
-        when(repositoryServiceMock.getAllNonForkedRepositoriesByUsername(anyString()))
+        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), false))
                 .thenThrow(new UserDoesNotExistException("not-existing-user"));
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("not-existing-user")))
@@ -49,7 +49,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void getRepositoriesByUsernameShouldReturnCorrectMessageForContentTypeApplicationXml() throws Exception {
-        verify(repositoryServiceMock, never()).getAllNonForkedRepositoriesByUsername(anyString());
+        verify(repositoryServiceMock, never()).getAllRepositoriesByUsername(anyString(), false);
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("anyUser")).contentType(MediaType.APPLICATION_XML))
                 .andDo(MockMvcResultHandlers.print())
@@ -60,7 +60,7 @@ class UserControllerIntegrationTest {
 
     @Test
     void getRepositoriesByUsernameShouldReturnEmptyListForUserWithoutRepositories() throws Exception {
-        when(repositoryServiceMock.getAllNonForkedRepositoriesByUsername(anyString()))
+        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), false))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")))
@@ -87,7 +87,7 @@ class UserControllerIntegrationTest {
         repositoryDTO.setOwnerLogin(username);
         repositoryDTO.setBranches(List.of(branchDTO1, branchDTO2));
 
-        when(repositoryServiceMock.getAllNonForkedRepositoriesByUsername(anyString()))
+        when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), false))
                 .thenReturn(List.of(repositoryDTO));
 
         mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")))

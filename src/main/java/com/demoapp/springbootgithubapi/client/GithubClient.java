@@ -2,11 +2,10 @@ package com.demoapp.springbootgithubapi.client;
 
 import com.demoapp.springbootgithubapi.model.Branch;
 import com.demoapp.springbootgithubapi.model.Repository;
-
-import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 public interface GithubClient {
-    List<Repository> getUserRepositoriesByUsername(String username);
+    ResponseEntity<Repository[]> getUserRepositoriesByUsername(String username, int page);
 
-    List<Branch> getRepositoryBranches(String username, String repositoryName);
+    ResponseEntity<Branch[]> getRepositoryBranches(String username, String repositoryName, int page);
 }
