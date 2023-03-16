@@ -39,7 +39,7 @@ class UserControllerMVCTest {
         when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), eq(false)))
                 .thenThrow(new UserDoesNotExistException("not-existing-user"));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(buildUri("not-existing-user")))
+        mockMvc.perform(MockMvcRequestBuilders.get(buildUri("not-existing-user")).contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -62,7 +62,7 @@ class UserControllerMVCTest {
         when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), eq(false)))
                 .thenReturn(Collections.emptyList());
 
-        mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")))
+        mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")).contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
@@ -89,7 +89,7 @@ class UserControllerMVCTest {
         when(repositoryServiceMock.getAllRepositoriesByUsername(anyString(), eq(false)))
                 .thenReturn(List.of(repositoryDTO));
 
-        mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")))
+        mockMvc.perform(MockMvcRequestBuilders.get(buildUri("UserWithoutRepositories")).contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
