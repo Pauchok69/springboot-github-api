@@ -4,10 +4,7 @@ import com.demoapp.springbootgithubapi.dto.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.RepositoryService;
 import com.demoapp.springbootgithubapi.service.github.RepositoryServiceImpl;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,7 +22,10 @@ public class UserController {
             consumes = "!" + MediaType.APPLICATION_XML_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public List<RepositoryDTO> getRepositoriesByUsername(@PathVariable String username) {
-        return repositoryService.getAllRepositoriesByUsername(username, false);
+    public List<RepositoryDTO> getRepositoriesByUsername(
+            @PathVariable String username,
+            @RequestParam(defaultValue = "0") boolean includeForked
+    ) {
+        return repositoryService.getAllRepositoriesByUsername(username, includeForked);
     }
 }
