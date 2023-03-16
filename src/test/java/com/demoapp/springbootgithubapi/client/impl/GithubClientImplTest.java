@@ -1,7 +1,7 @@
 package com.demoapp.springbootgithubapi.client.impl;
 
-import com.demoapp.springbootgithubapi.exception.RepositoryDoesNotExistException;
-import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
+import com.demoapp.springbootgithubapi.client.exception.RepositoryDoesNotExistException;
+import com.demoapp.springbootgithubapi.client.exception.UserDoesNotExistException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

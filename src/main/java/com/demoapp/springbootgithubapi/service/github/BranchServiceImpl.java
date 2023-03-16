@@ -2,7 +2,7 @@ package com.demoapp.springbootgithubapi.service.github;
 
 import com.demoapp.springbootgithubapi.client.GithubClient;
 import com.demoapp.springbootgithubapi.mapper.BranchMapper;
-import com.demoapp.springbootgithubapi.model.Branch;
+import com.demoapp.springbootgithubapi.client.model.Branch;
 import com.demoapp.springbootgithubapi.payload.BranchDTO;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.BranchService;

@@ -1,6 +1,6 @@
 package com.demoapp.springbootgithubapi.mapper;
 
-import com.demoapp.springbootgithubapi.model.Repository;
+import com.demoapp.springbootgithubapi.client.model.Repository;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

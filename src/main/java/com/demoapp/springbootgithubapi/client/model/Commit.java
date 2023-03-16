@@ -1,4 +1,4 @@
-package com.demoapp.springbootgithubapi.model;
+package com.demoapp.springbootgithubapi.client.model;
 
 import lombok.Data;
 

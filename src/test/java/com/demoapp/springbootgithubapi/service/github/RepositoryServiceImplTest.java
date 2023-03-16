@@ -2,8 +2,8 @@ package com.demoapp.springbootgithubapi.service.github;
 
 import com.demoapp.springbootgithubapi.client.GithubClient;
 import com.demoapp.springbootgithubapi.mapper.RepositoryMapper;
-import com.demoapp.springbootgithubapi.model.Owner;
-import com.demoapp.springbootgithubapi.model.Repository;
+import com.demoapp.springbootgithubapi.client.model.Owner;
+import com.demoapp.springbootgithubapi.client.model.Repository;
 import com.demoapp.springbootgithubapi.payload.BranchDTO;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.BranchService;

@@ -1,10 +1,10 @@
 package com.demoapp.springbootgithubapi.client.impl;
 
 import com.demoapp.springbootgithubapi.client.GithubClient;
-import com.demoapp.springbootgithubapi.exception.RepositoryDoesNotExistException;
-import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
-import com.demoapp.springbootgithubapi.model.Branch;
-import com.demoapp.springbootgithubapi.model.Repository;
+import com.demoapp.springbootgithubapi.client.exception.RepositoryDoesNotExistException;
+import com.demoapp.springbootgithubapi.client.exception.UserDoesNotExistException;
+import com.demoapp.springbootgithubapi.client.model.Branch;
+import com.demoapp.springbootgithubapi.client.model.Repository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpHeaders;

@@ -1,4 +1,4 @@
-package com.demoapp.springbootgithubapi.exception;
+package com.demoapp.springbootgithubapi.client.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

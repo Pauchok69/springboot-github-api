@@ -1,5 +1,6 @@
 package com.demoapp.springbootgithubapi.exception;
 
+import com.demoapp.springbootgithubapi.client.exception.UserDoesNotExistException;
 import com.demoapp.springbootgithubapi.payload.ErrorDetailsDTO;
 import org.springframework.http.*;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -10,7 +11,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class MainExceptionHandler extends ResponseEntityExceptionHandler {
-
     @ExceptionHandler(UserDoesNotExistException.class)
     public ResponseEntity<ErrorDetailsDTO> handleUserDoesNotExistException(
             UserDoesNotExistException ex

@@ -1,6 +1,6 @@
 package com.demoapp.springbootgithubapi.controller;
 
-import com.demoapp.springbootgithubapi.exception.UserDoesNotExistException;
+import com.demoapp.springbootgithubapi.client.exception.UserDoesNotExistException;
 import com.demoapp.springbootgithubapi.payload.BranchDTO;
 import com.demoapp.springbootgithubapi.payload.RepositoryDTO;
 import com.demoapp.springbootgithubapi.service.github.RepositoryServiceImpl;
