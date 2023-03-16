@@ -1,0 +1,8 @@
+app:
+  github:
+    api_token: GitHub API Token
+    api_version: 2022-11-28
+
+springdoc:
+  api-docs:
+    path: /api-docs
