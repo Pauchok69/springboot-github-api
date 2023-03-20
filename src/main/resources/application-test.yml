@@ -1,0 +1,4 @@
+app:
+  github:
+    api_token: TEST_GITHUB_API_TOKEN
+    api_uri: http://localhost:7070

@@ -1,5 +1,6 @@
 app:
   github:
+    api_uri: https://api.github.com
     api_token: GitHub API Token
     api_version: 2022-11-28
 

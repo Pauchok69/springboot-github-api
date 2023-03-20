@@ -31,7 +31,7 @@ public class RepositoryServiceImpl implements RepositoryService {
                 .stream();
 
         if (!includeForked) {
-            repositoryStream = repositoryStream.filter(repository -> !repository.getFork());
+            repositoryStream = repositoryStream.filter(repository -> !repository.getForked());
         }
         List<RepositoryDTO> repositoryDTOs = repositoryStream
                 .map(repositoryMapper::repositoryToRepositoryDto)

@@ -44,6 +44,7 @@ class GithubClientImplTest {
 
         githubClient = new GithubClientImpl(
                 restTemplateBuilderMock,
+                "https://api.github.com",
                 "Test API Version",
                 "Test API Token"
         );

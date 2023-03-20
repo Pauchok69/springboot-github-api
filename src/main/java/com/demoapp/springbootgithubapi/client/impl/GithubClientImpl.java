@@ -22,11 +22,12 @@ public class GithubClientImpl implements GithubClient {
 
     public GithubClientImpl(
             RestTemplateBuilder restTemplateBuilder,
+            @Value("${app.github.api_uri}") String githubApiUri,
             @Value("${app.github.api_version}") String githubApiVersion,
             @Value("${app.github.api_token}") String githubApiToken
     ) {
         this.restTemplate = restTemplateBuilder
-                .rootUri("https://api.github.com")
+                .rootUri(githubApiUri)
                 .defaultHeader(HTTP_HEADER_GITHUB_API_VERSION, githubApiVersion)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + githubApiToken)
                 .build();
@@ -61,7 +62,7 @@ public class GithubClientImpl implements GithubClient {
     public ResponseEntity<Branch[]> getRepositoryBranches(String username, String repositoryName, int page) {
         try {
             ResponseEntity<Branch[]> responseEntity = restTemplate.getForEntity(
-                    "/repos/{username}/{repository_name}/branches",
+                    "/repos/{username}/{repository_name}/branches?per_page={perPage}&page={page}",
                     Branch[].class,
                     username,
                     repositoryName,

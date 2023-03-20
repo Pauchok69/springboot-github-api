@@ -26,7 +26,7 @@ class RepositoryMapperTest {
         owner.setLogin("Test username");
 
         Repository repository = new Repository();
-        repository.setFork(false);
+        repository.setForked(false);
         repository.setName("Test Name");
         repository.setOwner(owner);
 
