@@ -175,7 +175,7 @@ class RepositoryServiceImplTest {
 
         Repository repository = new Repository();
         repository.setName("test repository");
-        repository.setForked(isForked);
+        repository.setFork(isForked);
         repository.setOwner(owner);
         return repository;
     }

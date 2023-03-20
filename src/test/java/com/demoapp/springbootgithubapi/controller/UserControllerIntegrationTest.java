@@ -116,7 +116,7 @@ class UserControllerIntegrationTest {
     @Test
     void getRepositoriesByUsername_shouldReturnCorrectResponseForUserWithRepositories() throws Exception {
         stubFor(WireMock.get(urlPathMatching(GITHUB_USERS_REPOS_PATH))
-                .willReturn(okJson("[{\"name\": \"TestRepository\", \"forked\": false, \"owner\": {\"login\": \"TestUser\"}}]"))
+                .willReturn(okJson("[{\"name\": \"TestRepository\", \"fork\": false, \"owner\": {\"login\": \"TestUser\"}}]"))
         );
 
         stubFor(WireMock.get(urlPathMatching(GITHUB_BRANCHES_PATH))

@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class Repository {
     private String name;
-    private Boolean forked;
+    private Boolean fork;
     private Owner owner;
 }
